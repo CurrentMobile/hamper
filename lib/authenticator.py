@@ -9,7 +9,7 @@ from selenium.webdriver.common.keys import Keys
 
 class HamperAuthenticator(object):
 
-	def __init__(self, email, password):
+	def __init__(self, driver, email, password):
 		super(HamperAuthenticator, self).__init__()
 		self.email 	  = email
 		self.password = password
@@ -28,8 +28,8 @@ class HamperAuthenticator(object):
 
 		self.driver.find_element_by_id("submitButton2").click()
 		self.cookie_jar = self.driver.get_cookies()
-
-		print self.cookie_jar
+		
+		return self.cookie_jar
 
 
 
