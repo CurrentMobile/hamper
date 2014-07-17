@@ -4,8 +4,8 @@
 # or an error message on failure
 #
 
-import mechanize
-import cookielib
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 class GrubyAuthenticator(object):
 
@@ -13,31 +13,24 @@ class GrubyAuthenticator(object):
 		super(GrubyAuthenticator, self).__init__()
 		self.email 	  = email
 		self.password = password
-		self.browser  = mechanize.Browser()
-		self.cookie_jar = cookielib.LWPCookieJar()
-		self.browser.set_cookiejar(self.cookie_jar)
+		self.driver = webdriver.Firefox()
+		self.cookie_jar = self.driver.get_cookies()
 
 	def sign_in(self):
-
-		# Set up the browser options 
-		self.browser.set_handle_equiv(True)
-		self.browser.set_handle_gzip(True)
-		self.browser.set_handle_redirect(True)
-		self.browser.set_handle_referer(True)
-		self.browser.set_handle_robots(False)
-
 		# Open the profile URL. This will forward to the sign in page if session is invalid
-		response = self.browser.open("https://developer.apple.com/account/ios/profile/")
+		self.driver.get("https://developer.apple.com/account/ios/profile/")
 
-		# Select the first form
-		self.browser.select_form(nr=0)
+		email_element = self.driver.find_element_by_name("appleId")
+		email_element.send_keys(self.email)
 
-		# Set the email and password fields on that form
-		self.browser.form["appleId"] = self.email
-		self.browser.form["accountPassword"] = self.password
+		password_element = self.driver.find_element_by_name("accountPassword")
+		password_element.send_keys(self.password)
 
-		# Submit the form
-		self.browser.submit()
+		self.driver.find_element_by_id("submitButton2").click()
+		self.cookie_jar = self.driver.get_cookies()
+		
+		print self.cookie_jar
 
-		# Return the cookie jar object
-		return self.browser._ua_handlers['_cookies'].cookiejar
+
+
+

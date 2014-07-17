@@ -14,5 +14,3 @@ class Gruby(object):
 
 g = Gruby('', '')
 cookie_jar = g.authenticator.sign_in()
-g.certifier.browser.set_cookiejar(cookie_jar)
-g.certifier.generate_certificate()
