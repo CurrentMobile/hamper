@@ -1,5 +1,5 @@
 #
-# GrubyAuthenticator is the class to handle the authentication part of the provisioning portal.
+# HamperAuthenticator is the class to handle the authentication part of the provisioning portal.
 # Instantiate with the email and password you want, it'll pass back the cookie jar if successful,
 # or an error message on failure
 #
@@ -7,10 +7,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-class GrubyAuthenticator(object):
+class HamperAuthenticator(object):
 
 	def __init__(self, email, password):
-		super(GrubyAuthenticator, self).__init__()
+		super(HamperAuthenticator, self).__init__()
 		self.email 	  = email
 		self.password = password
 		self.driver = webdriver.Firefox()
@@ -28,7 +28,7 @@ class GrubyAuthenticator(object):
 
 		self.driver.find_element_by_id("submitButton2").click()
 		self.cookie_jar = self.driver.get_cookies()
-		
+
 		print self.cookie_jar
 
 

@@ -1,15 +1,15 @@
 #
-# GrubyCertifier is the class to handle the creation and downloading of signing certificates
-# Instantiate with the cookie jar returned by GrubyAuthenticator and the CSR file path to use. 
-# GrubyCertifier will then go off and generate a distribution certificate on the account.
+# HamperCertifier is the class to handle the creation and downloading of signing certificates
+# Instantiate with the cookie jar returned by HamperAuthenticator and the CSR file path to use. 
+# HamperCertifier will then go off and generate a distribution certificate on the account.
 #
 
 import mechanize
 import cookielib
 
-class GrubyCertifier(object):
+class HamperCertifier(object):
 	def __init__(self, cookie_jar, csr_path):
-		super(GrubyCertifier, self).__init__()
+		super(HamperCertifier, self).__init__()
 		self.browser  = mechanize.Browser()
 		self.cookie_jar = cookie_jar
 		self.csr_path = csr_path
