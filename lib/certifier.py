@@ -8,6 +8,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 
+from selenium.webdriver.support.ui import WebDriverWait
+
 class HamperCertifier(object):
 	def __init__(self, csr_path):
 		super(HamperCertifier, self).__init__()
@@ -36,8 +38,8 @@ class HamperCertifier(object):
 		#	http://i.imgur.com/xaeAm2z.png
 		# ---------
 
-		# Wait for .5 seconds, this allows the submit button to be added to the page
-		time.sleep(0.5)
+		# Wait until the continue button is clickable
+		time.sleep(0.2)
 
 		# Locate the Continue button on the page
 		continue_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
@@ -52,13 +54,26 @@ class HamperCertifier(object):
 		#	We now upload the CSR at the provided filepath.
 		# -------
 
-		# Wait for .5 seconds, this allows the upload field to be added to the page
-		time.sleep(0.5)
-
+		# Wait until the upload field is clickable
+		time.sleep(0.2)
+		
+		# Set the file being uploaded to the CSR provided in the initialiser
 		file_upload_field = driver.find_element_by_name("upload")
 		file_upload_field.send_keys(self.csr_path)
 
+		# Find and click the submit button
 		generate_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
-
 		generate_button_element.click()
+		
+		# Have the browser wait until the downloadForm is visible (this contains the download button & link)
+		wait = WebDriverWait(driver, 20)
+		wait.until(lambda driver: driver.find_element_by_class_name('downloadForm'))
+
+		# Find the download button, grab the download URL		
+		download_button_element = driver.find_element_by_css_selector(".button.small.blue")
+		download_url = download_button_element.get_attribute("href")
+	
+		# Return the download URL
+		return download_url
+
 
