@@ -37,7 +37,7 @@ class HamperCertifier(object):
 		driver.get("https://developer.apple.com/account/ios/certificate/certificateCreate.action?formID=65342375")
 
 		# Locate the Continue button on the page
-		continue_button_element = driver.find_element_by_class_name("cancel")
+		continue_button_element = driver.find_element_by_css_selector(".button.small.right")
 
 		# Click the Continue button
 		continue_button_element.click()
