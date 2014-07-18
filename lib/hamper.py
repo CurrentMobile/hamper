@@ -5,7 +5,6 @@ from authenticator import HamperAuthenticator
 from certifier import HamperCertifier
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 
 class Hamper(object):
 	def __init__(self, email, password):
