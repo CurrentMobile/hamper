@@ -12,7 +12,7 @@ class Hamper(object):
 		super(Hamper, self).__init__()
 		self.email 	  = email
 		self.password = password
-		self.driver = webdriver.Firefox()
+		self.driver   = webdriver.Firefox
 
 		self.authenticator = HamperAuthenticator(self.driver, email, password)
 		self.certifier = HamperCertifier('/Users/kiran/Developer/iOS/Signing/CertificateSigningRequest.certSigningRequest')
