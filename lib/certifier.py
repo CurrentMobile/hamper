@@ -6,6 +6,7 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import time
 
 class HamperCertifier(object):
 	def __init__(self, csr_path):
@@ -31,13 +32,33 @@ class HamperCertifier(object):
 		submit_button_element.click()
 
 		# ---------	
-		# Browser is now at this page:
-		# http://i.imgur.com/xaeAm2z.png
+		#	Browser is now at this page:
+		#	http://i.imgur.com/xaeAm2z.png
 		# ---------
-		driver.get("https://developer.apple.com/account/ios/certificate/certificateCreate.action?formID=65342375")
+
+		# Wait for .5 seconds, this allows the submit button to be added to the page
+		time.sleep(0.5)
 
 		# Locate the Continue button on the page
-		continue_button_element = driver.find_element_by_css_selector(".button.small.right")
+		continue_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
 
 		# Click the Continue button
 		continue_button_element.click()
+
+		# -------
+		#	Browser is now at this page:
+		#	http://i.imgur.com/xzeQEZA.png
+		#
+		#	We now upload the CSR at the provided filepath.
+		# -------
+
+		# Wait for .5 seconds, this allows the upload field to be added to the page
+		time.sleep(0.5)
+
+		file_upload_field = driver.find_element_by_name("upload")
+		file_upload_field.send_keys(self.csr_path)
+
+		generate_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
+
+		generate_button_element.click()
+
