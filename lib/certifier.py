@@ -8,6 +8,7 @@ from error import HamperError
 from helpers.driver import HamperDriver
 
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import time
 
@@ -104,9 +105,12 @@ class HamperCertifier(object):
 		#	Browser is now at this page:
 		#	http://i.imgur.com/D4bmbAi.png
 		# ---------
-
-		# Wait until the dropdown is clickable
+		
 		time.sleep(0.2)
+		
+		# Wait until the dropdown is clickable
+		wait = WebDriverWait(driver, 20)
+		wait.until(lambda driver: driver.find_element_by_name("appIdId"))
 
 		# Select the dropdown list
 		select_app_id_dropdown = driver.find_element_by_name("appIdId")
@@ -144,11 +148,14 @@ class HamperCertifier(object):
 		#	http://i.imgur.com/xaeAm2z.png
 		# ---------
 
-		# Wait until the continue button is clickable
 		time.sleep(0.2)
 
+		# Wait until the continue button is clickable
+		wait = WebDriverWait(driver, 20)
+		wait.until(lambda driver: driver.find_element_by_class_name("submit"))
+
 		# Locate the Continue button on the page
-		continue_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
+		continue_button_element = driver.find_element_by_class_name("submit")
 
 		# Click the Continue button
 		continue_button_element.click()
@@ -162,8 +169,9 @@ class HamperCertifier(object):
 		# -------
 
 		# Wait until the upload field is clickable
-		time.sleep(0.2)
-		
+		wait = WebDriverWait(driver, 20)
+		wait.until(lambda driver: driver.find_element_by_name("upload"))
+
 		# Set the file being uploaded to the CSR provided in the initialiser
 		file_upload_field = driver.find_element_by_name("upload")
 		file_upload_field.send_keys(csr_path)
@@ -173,7 +181,7 @@ class HamperCertifier(object):
 		generate_button_element.click()
 		
 		# Have the browser wait until the downloadForm is visible (this contains the download button & link)
-		wait = WebDriverWait(driver, 20)
+		wait = WebDriverWait(driver, 30)
 		wait.until(lambda driver: driver.find_element_by_class_name('downloadForm'))
 
 		# Find the download button, grab the download URL		
