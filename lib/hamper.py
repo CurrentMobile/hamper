@@ -20,4 +20,4 @@ class Hamper(object):
 
 h = Hamper('', '')
 h.authenticator.sign_in(h.driver)
-h.certifier.generate_certificate(h.driver, HamperCertifier.HCCertificateTypeDevelopmentPush)
+print h.certifier.generate_distribution_certificate(h.driver)
