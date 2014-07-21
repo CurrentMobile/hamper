@@ -7,9 +7,7 @@ from helpers.driver import HamperDriver
 class Hamper(object):
 	def __init__(self, email, password):
 		super(Hamper, self).__init__()
-		self.email 	  = email
-		self.password = password
-
+		
 		self.authenticator = HamperAuthenticator(email, password)
 		self.certifier = HamperCertifier()
 
