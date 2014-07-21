@@ -16,8 +16,8 @@ class Hamper(object):
 		self.driver	  = webdriver.Chrome()
 
 		self.authenticator = HamperAuthenticator(email, password)
-		self.certifier = HamperCertifier('/Users/kiran/Developer/iOS/Signing/CertificateSigningRequest.certSigningRequest')
+		self.certifier = HamperCertifier()
 
-h = Hamper('', '')
+h = Hamper(email='', password='')
 h.authenticator.sign_in(h.driver)
-print h.certifier.generate_distribution_certificate(h.driver)
+print h.certifier.generate_distribution_certificate(h.driver, "/Users/kiran/Developer/iOS/Signing/CertificateSigningRequest.certSigningRequest")

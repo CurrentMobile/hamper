@@ -24,31 +24,29 @@ class HamperCertifier(object):
 	HCCertificateTypeDistribution 	  = 2
 	HCCertificateTypeDistributionPush = 3
 
-	def __init__(self, csr_path):
+	def __init__(self):
 		super(HamperCertifier, self).__init__()
-		# self.driver = driver
-		self.csr_path = csr_path
 
 	#
 	# Shortcut methods to create the desired certificate
 	# instead of calling generate_certificate with a bunch of params
 	#
-	def generate_development_certificate(self, driver):
-		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDevelopment)
+	def generate_development_certificate(self, driver, csr_file):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDevelopment, csr_path=csr_file)
 	
-	def generate_development_push_certificate(self, driver, application_id):
-		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDevelopmentPush, app_id=application_id)
+	def generate_development_push_certificate(self, driver, application_id, csr_file):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDevelopmentPush, app_id=application_id, csr_path=csr_file)
 
-	def generate_distribution_certificate(self, driver):
-		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDistribution)
+	def generate_distribution_certificate(self, driver, csr_file):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDistribution, csr_path=csr_file)
 	
-	def generate_distribution_push_certificate(self, driver, application_id):
-		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDistribution, app_id=application_id)
+	def generate_distribution_push_certificate(self, driver, application_id, csr_file):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDistribution, app_id=application_id, csr_path=csr_file)
 
 	#
 	# Main method to run the submethods to generate the certificate.
 	#
-	def generate_certificate(self, driver, certificate_type=HCCertificateTypeDistribution, app_id=""):
+	def generate_certificate(self, driver, certificate_type=HCCertificateTypeDistribution, app_id="", csr_path=""):
 
 		# Set the certificate_type property 
 		self.pick_certificate_type(driver, certificate_type)
@@ -62,7 +60,7 @@ class HamperCertifier(object):
 		self.confirm_csr_instructions(driver)
 
 		# Generate, wait, and download the actual certificate. Return the URL.
-		return self.generate_and_download_certificate(driver)
+		return self.generate_and_download_certificate(driver, csr_path)
 
 	def pick_certificate_type(self, driver, certificate_type):
 		# This will trigger the provisioning portal to load this page: i.imgur.com/8RmehDm.png
@@ -153,7 +151,7 @@ class HamperCertifier(object):
 		# Click the Continue button
 		continue_button_element.click()
 
-	def generate_and_download_certificate(self, driver):
+	def generate_and_download_certificate(self, driver, csr_path):
 		# -------
 		#	Browser is now at this page:
 		#	http://i.imgur.com/xzeQEZA.png
@@ -166,7 +164,7 @@ class HamperCertifier(object):
 		
 		# Set the file being uploaded to the CSR provided in the initialiser
 		file_upload_field = driver.find_element_by_name("upload")
-		file_upload_field.send_keys(self.csr_path)
+		file_upload_field.send_keys(csr_path)
 
 		# Find and click the submit button
 		generate_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
