@@ -7,6 +7,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+from helpers.driver import HamperDriver
+
 class HamperAuthenticator(object):
 
 	def __init__(self, email, password):
@@ -14,7 +16,9 @@ class HamperAuthenticator(object):
 		self.email 	  = email
 		self.password = password
 
-	def sign_in(self, driver):
+	def sign_in(self):
+		driver = HamperDriver()
+		
 		# Open the profile URL. This will forward to the sign in page if session is invalid
 		driver.get("https://developer.apple.com/account/ios/profile/")
 
