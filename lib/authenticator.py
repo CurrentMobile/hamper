@@ -3,10 +3,6 @@
 # Instantiate with the email and password you want, it'll pass back the cookie jar if successful,
 # or an error message on failure
 #
-
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-
 from helpers.driver import HamperDriver
 
 class HamperAuthenticator(object):
@@ -18,7 +14,7 @@ class HamperAuthenticator(object):
 
 	def sign_in(self):
 		driver = HamperDriver()
-		
+
 		# Open the profile URL. This will forward to the sign in page if session is invalid
 		driver.get("https://developer.apple.com/account/ios/profile/")
 
@@ -29,5 +25,3 @@ class HamperAuthenticator(object):
 		password_element.send_keys(self.password)
 
 		driver.find_element_by_id("submitButton2").click()
-		
-		return driver

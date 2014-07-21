@@ -1,7 +1,6 @@
 # Import the other modules used in this library
 from authenticator import HamperAuthenticator
 from certifier import HamperCertifier
-from error import HamperError
 
 from helpers.driver import HamperDriver
 
