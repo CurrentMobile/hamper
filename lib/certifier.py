@@ -14,23 +14,63 @@ import time
 
 
 class HamperCertifier(object):
+
+	#
+	# Set up constants for the specific types of certificate.
+	# Use these when calling generate_certificate() to pick the type of cert to create
+	#
+	HCCertificateTypeDevelopment  	  = 0
+	HCCertificateTypeDevelopmentPush  = 1
+	HCCertificateTypeDistribution 	  = 2
+	HCCertificateTypeDistributionPush = 3
+
 	def __init__(self, csr_path):
 		super(HamperCertifier, self).__init__()
 		# self.driver = driver
-		self.csr_path = csr_path			
+		self.csr_path = csr_path
 
-	def generate_certificate(self, driver):
-		self.pick_certificate_type(driver)
+	#
+	# Shortcut methods to create the desired certificate
+	# instead of calling generate_certificate with a bunch of params
+	#
+	def generate_development_certificate(self, driver, app_id):
+		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDevelopment)
+	
+	def generate_development_push_certificate(self, driver, app_id):
+		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDevelopmentPush)
+
+	def generate_distribution_certificate(self, driver):
+		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDistribution)
+	
+	def generate_distribution_push_certificate(self, driver):
+		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDistribution)
+
+
+	def generate_certificate(self, driver, certificate_type=HCCertificateTypeDistributionPush):
+		self.pick_certificate_type(driver, certificate_type)
 		self.confirm_csr_instructions(driver)
-		self.generate_and_download_certificate(driver)
+
+		return self.generate_and_download_certificate(driver)
 
 
-	def pick_certificate_type(self, driver):
+	def pick_certificate_type(self, driver, certificate_type):
 		# This will trigger the provisioning portal to load this page: i.imgur.com/8RmehDm.png
 		driver.get("https://developer.apple.com/account/ios/certificate/certificateCreate.action?formID=27276876")
 
-		# Select the radio button to create a distribution certificate
-		radio_button = driver.find_element_by_id("type-iosNoOCSP")
+		# Create a var to store the radio button's ID in (will depend on the cert type being requested)
+		button_id = ""
+
+		# Check the cert type parameter, set the button's ID accordingly
+		if certificate_type == HamperCertifier.HCCertificateTypeDevelopment:
+			button_id = "type-development"
+		elif certificate_type == HamperCertifier.HCCertificateTypeDevelopmentPush:
+			button_id = "type-sandbox"
+		elif certificate_type == HamperCertifier.HCCertificateTypeDistribution:
+			button_id = "type-iosNoOCSP"
+		elif certificate_type == HamperCertifier.HCCertificateTypeDistributionPush:
+			button_id = "type-production"
+
+		radio_button = driver.find_element_by_id(button_id)
 
 		is_disabled = radio_button.get_attribute("disabled")
 		
@@ -47,7 +87,6 @@ class HamperCertifier(object):
 
 		# Click the submit button
 		submit_button_element.click()
-
 
 	def confirm_csr_instructions(self, driver):
 		# ---------	
