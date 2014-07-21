@@ -33,25 +33,36 @@ class HamperCertifier(object):
 	# Shortcut methods to create the desired certificate
 	# instead of calling generate_certificate with a bunch of params
 	#
-	def generate_development_certificate(self, driver, app_id):
-		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDevelopment)
+	def generate_development_certificate(self, driver):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDevelopment)
 	
-	def generate_development_push_certificate(self, driver, app_id):
-		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDevelopmentPush)
+	def generate_development_push_certificate(self, driver, application_id):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDevelopmentPush, app_id=application_id)
 
 	def generate_distribution_certificate(self, driver):
-		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDistribution)
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDistribution)
 	
-	def generate_distribution_push_certificate(self, driver):
-		return self.generate_certificate(driver, certificate_type=HCCertificateTypeDistribution)
+	def generate_distribution_push_certificate(self, driver, application_id):
+		return self.generate_certificate(driver, certificate_type=HamperCertifier.HCCertificateTypeDistribution, app_id=application_id)
 
+	#
+	# Main method to run the submethods to generate the certificate.
+	#
+	def generate_certificate(self, driver, certificate_type=HCCertificateTypeDistribution, app_id=""):
 
-	def generate_certificate(self, driver, certificate_type=HCCertificateTypeDistributionPush):
+		# Set the certificate_type property 
 		self.pick_certificate_type(driver, certificate_type)
+
+		# If we're going to generate a push certificate, we need to specify an app ID.
+		# This is an extra step in the Provisioning Profile process
+		if certificate_type == HamperCertifier.HCCertificateTypeDevelopmentPush or certificate_type == HamperCertifier.HCCertificateTypeDistributionPush:
+			self.select_app_id(driver, app_id)
+
+		# Confirm the CSR generation instructions
 		self.confirm_csr_instructions(driver)
 
+		# Generate, wait, and download the actual certificate. Return the URL.
 		return self.generate_and_download_certificate(driver)
-
 
 	def pick_certificate_type(self, driver, certificate_type):
 		# This will trigger the provisioning portal to load this page: i.imgur.com/8RmehDm.png
@@ -87,6 +98,45 @@ class HamperCertifier(object):
 
 		# Click the submit button
 		submit_button_element.click()
+
+	def select_app_id(self, driver, app_id):
+		# ---------	
+		#	Browser is now at this page:
+		#	http://i.imgur.com/D4bmbAi.png
+		# ---------
+
+		# Wait until the dropdown is clickable
+		time.sleep(0.2)
+
+		# Select the dropdown list
+		select_app_id_dropdown = driver.find_element_by_name("appIdId")
+
+		# Use the xpath to select all the child nodes of the appID dropdown list
+		options_list = select_app_id_dropdown.find_elements_by_xpath("./*")
+
+		# Initialise the selected_option
+		selected_option = None
+
+		# Loop through the options, check whether the provided appID is 
+		# in the dropdown. If it is, set selected_option to that HTML element.
+		for option in options_list:
+			if app_id in option.text:
+				selected_option = option
+				break
+
+		# Check whether the option was found (i.e. the selected_option class is of the same type as the selected_app_id_dropdown class)
+		if type(selected_option) != type(select_app_id_dropdown):
+			# If it wasn't found, throw an exception
+			raise Exception(HamperError(HamperError.HECodeInvalidAppID, "The app ID provided (" + app_id + ") could not be found."))
+
+		# If the app ID exists in the list, select it from the dropdown menu
+		selected_option.click()
+
+		# Locate the Continue button on the page
+		continue_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
+
+		# Click the continue button
+		continue_button_element.click()
 
 	def confirm_csr_instructions(self, driver):
 		# ---------	
