@@ -4,7 +4,7 @@
 # HamperCertifier will then go off and generate a distribution certificate on the account.
 #
 
-from error import HamperError
+from helpers.error import HamperError
 from helpers.driver import HamperDriver
 
 from selenium.webdriver.support.ui import WebDriverWait

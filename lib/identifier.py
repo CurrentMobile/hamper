@@ -3,7 +3,7 @@
 # Use this class to create the app ID for your application.
 #
 
-from error import HamperError
+from helpers.error import HamperError
 from helpers.driver import HamperDriver
 
 from selenium.webdriver.support.ui import WebDriverWait
