@@ -4,6 +4,8 @@
 # HamperCertifier will then go off and generate a distribution certificate on the account.
 #
 
+from error import HamperError
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -18,12 +20,24 @@ class HamperCertifier(object):
 		self.csr_path = csr_path			
 
 	def generate_certificate(self, driver):
+		self.pick_certificate_type(driver)
+		self.confirm_csr_instructions(driver)
+		self.generate_and_download_certificate(driver)
 
+
+	def pick_certificate_type(self, driver):
 		# This will trigger the provisioning portal to load this page: i.imgur.com/8RmehDm.png
 		driver.get("https://developer.apple.com/account/ios/certificate/certificateCreate.action?formID=27276876")
 
 		# Select the radio button to create a distribution certificate
 		radio_button = driver.find_element_by_id("type-iosNoOCSP")
+
+		is_disabled = radio_button.get_attribute("disabled")
+		
+		# Check whether the radio button is disabled.
+		# This could be disabled because the account already has a few certs of that type
+		if is_disabled:
+			raise Exception(HamperError(HamperError.HECodeDisabledCertificateType, "Certificate type is disabled. This could be because you already have multiple of that type of cert. Try deleting one certificate of this type."))
 
 		# Click the radio button
 		radio_button.click()
@@ -34,6 +48,8 @@ class HamperCertifier(object):
 		# Click the submit button
 		submit_button_element.click()
 
+
+	def confirm_csr_instructions(self, driver):
 		# ---------	
 		#	Browser is now at this page:
 		#	http://i.imgur.com/xaeAm2z.png
@@ -48,6 +64,7 @@ class HamperCertifier(object):
 		# Click the Continue button
 		continue_button_element.click()
 
+	def generate_and_download_certificate(self, driver):
 		# -------
 		#	Browser is now at this page:
 		#	http://i.imgur.com/xzeQEZA.png
@@ -76,5 +93,3 @@ class HamperCertifier(object):
 	
 		# Return the download URL
 		return download_url
-
-
