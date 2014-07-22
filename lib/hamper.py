@@ -15,6 +15,3 @@ class Hamper(object):
 
 h = Hamper(email='', password='')
 h.authenticator.sign_in()
-h.identifier.generate_app_id("FutureAppTest", "com.mobilexlabs.futureapptest", [HamperIdentifier.HIServicePushNotifications])
-
-# print h.certifier.generate_distribution_certificate("/Users/kiran/Developer/iOS/Signing/CertificateSigningRequest.certSigningRequest")
