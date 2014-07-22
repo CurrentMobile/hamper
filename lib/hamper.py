@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+
 # Import the other modules used in this library
 from authenticator import HamperAuthenticator
 from certifier import HamperCertifier
@@ -10,7 +12,7 @@ from helpers.date import HamperDate
 class Hamper(object):
 	def __init__(self):
 		super(Hamper, self).__init__()
-		
+
 		self.authenticator = HamperAuthenticator()
 		self.certifier 	   = HamperCertifier()
 		self.identifier    = HamperIdentifier()
