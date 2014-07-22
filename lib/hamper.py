@@ -10,11 +10,11 @@ from helpers.date import HamperDate
 class Hamper(object):
 	def __init__(self):
 		super(Hamper, self).__init__()
-
+		
 		self.authenticator = HamperAuthenticator()
-		self.certifier = HamperCertifier()
-		self.identifier = HamperIdentifier()
-		self.provisioner = HamperProvisioner()
+		self.certifier 	   = HamperCertifier()
+		self.identifier    = HamperIdentifier()
+		self.provisioner   = HamperProvisioner()
 
 h = Hamper()
 h.authenticator.sign_in(email='', password='')
