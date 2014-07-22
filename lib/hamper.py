@@ -19,4 +19,4 @@ class Hamper(object):
 h = Hamper(email='', password='')
 h.authenticator.sign_in()
 exp_date = HamperDate(month=7, day=21, year=2015)
-h.provisioner.generate_adhoc_profile("com.MobileXLabs.EEfyAXTDYxEyiFVLOGhog", "testingtest", expiration_date=exp_date)
+h.provisioner.generate_adhoc_profile("com.MobileXLabs.EEfyAXTDYxEyiFVLOGhog", "testingtest")
