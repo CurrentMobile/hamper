@@ -1,8 +1,9 @@
 #
-# HamperProvisioner is the class to handle the creation and downloading of provisioning profiles
+# HamperProvisioner is the class to handle the creation and downloading of provisioning profiles.
+#
 # By default it will sign a development profile with all the available certificates for that type. It will also auto-select all devices to be provisioned.
-# By default it will sign a distribution profile with the first profile in the list. You can change this by specifying
-# the expiration date of the profile to be used.
+# By default it will sign a distribution profile with the first profile in the list. You can change this by specifying the expiration date of the profile 
+# to be used.
 #
 
 from helpers.error import HamperError
@@ -36,10 +37,10 @@ class HamperProvisioner(object):
 		self.select_app_id(app_id)
 
 		if profile_type == HamperProvisioner.HPProfileTypeAppStore or profile_type == HamperProvisioner.HPProfileTypeAdHoc:
-			self.pick_distribution_signing_certificate(date.readable_date())
+			self.pick_distribution_signing_certificate(date)
 		else:
 			self.pick_development_signing_certificate()
-		
+
 		# If we're generating a development or adhoc profile, we need to pick the provisioned devices
 		if profile_type == HamperProvisioner.HPProfileTypeDevelopment or profile_type == HamperProvisioner.HPProfileTypeAdHoc:
 			self.pick_provisioned_devices()
@@ -146,7 +147,7 @@ class HamperProvisioner(object):
 		# Click the continue button
 		continue_button_element.click()
 
-	def pick_distribution_signing_certificate(self, date_string):
+	def pick_distribution_signing_certificate(self, date):
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -167,18 +168,26 @@ class HamperProvisioner(object):
 		available_certificates = rows_div.find_elements_by_xpath("./*")
 
 		# Create a radio_button in the general method scope
-		radio_button = None
+		radio_button = None	
+	
+		if date:
+			# Store the stringified version of the date, so it isn't generated on every loop iteration
+			date_string = date.readable_date()
 
-		# Loop through the rows in the table
-		for i in available_certificates:
-			# Check if the current row has the provided expiration date
-			if i.get_attribute("innerHTML") == date_string:
-				# If it does, get the element ABOVE the current one.
-				# Refer back to the structure of the contents (gist.github.com/KiranPanesar/a0221c00390b5bdaf5af)
-				current_date_index = available_certificates.index(i)
+			# Loop through the rows in the table
+			for i in available_certificates:
+				# Check if the current row has the provided expiration date
+				if i.get_attribute("innerHTML") == date_string:
+					# If it does, get the element ABOVE the current one.
+					# Refer back to the structure of the contents (gist.github.com/KiranPanesar/a0221c00390b5bdaf5af)
+					current_date_index = available_certificates.index(i)
 
-				# Set the radio button to the above element
-				radio_button = available_certificates[current_date_index-1].find_element_by_xpath("./input")
+					# Set the radio button to the above element
+					radio_button = available_certificates[current_date_index-1].find_element_by_xpath("./input")
+
+		else:
+			# Set the radio button to the above element
+			radio_button = available_certificates[0].find_element_by_xpath("./input")
 
 		# If the radio button is None, i.e. no certificate was selected/found, throw an error
 		try:
