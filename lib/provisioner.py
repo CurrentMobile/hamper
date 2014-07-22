@@ -21,7 +21,8 @@ class HamperProvisioner(object):
 	def __init__(self):
 		super(HamperProvisioner, self).__init__()
 
-
+	def generate_development_profile(self, app_id, profile_name):
+		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeDevelopment, app_id, profile_name)
 
 	def generate_provisioning_profile(self, profile_type, app_id, profile_name):
 		self.pick_profile_type(profile_type)
@@ -29,7 +30,7 @@ class HamperProvisioner(object):
 		self.pick_development_signing_certificate()
 		self.pick_provisioned_devices()
 		self.enter_profile_name(profile_name)
-		print self.download_provisioning_profile()
+		return self.download_provisioning_profile()
 
 	def pick_profile_type(self, profile_type):
 		
