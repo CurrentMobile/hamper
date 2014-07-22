@@ -41,8 +41,7 @@ class HamperCertifier(object):
 		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistribution, csr_path=csr_file)
 	
 	def generate_distribution_push_certificate(self, application_id, csr_file):
-		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistribution, app_id=application_id, csr_path=csr_file)
-
+		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistributionPush, app_id=application_id, csr_path=csr_file)
 	#
 	# Main method to run the submethods to generate the certificate.
 	#
