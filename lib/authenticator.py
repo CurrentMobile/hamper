@@ -7,21 +7,20 @@ from helpers.driver import HamperDriver
 
 class HamperAuthenticator(object):
 
-	def __init__(self, email, password):
+	def __init__(self):
 		super(HamperAuthenticator, self).__init__()
-		self.email 	  = email
-		self.password = password
 
-	def sign_in(self):
+	def sign_in(self, email=None, password=None):
+		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
 		# Open the profile URL. This will forward to the sign in page if session is invalid
 		driver.get("https://developer.apple.com/account/ios/profile/")
 
 		email_element = driver.find_element_by_name("appleId")
-		email_element.send_keys(self.email)
+		email_element.send_keys(email)
 
 		password_element = driver.find_element_by_name("accountPassword")
-		password_element.send_keys(self.password)
+		password_element.send_keys(password)
 
 		driver.find_element_by_id("submitButton2").click()
