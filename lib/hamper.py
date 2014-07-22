@@ -2,6 +2,7 @@
 from authenticator import HamperAuthenticator
 from certifier import HamperCertifier
 from identifier import HamperIdentifier
+from provisioner import HamperProvisioner
 
 from helpers.driver import HamperDriver
 
@@ -12,6 +13,8 @@ class Hamper(object):
 		self.authenticator = HamperAuthenticator(email, password)
 		self.certifier = HamperCertifier()
 		self.identifier = HamperIdentifier()
+		self.provisioner = HamperProvisioner()
 
 h = Hamper(email='', password='')
 h.authenticator.sign_in()
+h.provisioner.generate_provisioning_profile(HamperProvisioner.HPProfileTypeDevelopment, "com.MobileXLabs.jByhnDyFRPWTaNA", "TestAppppp")	
