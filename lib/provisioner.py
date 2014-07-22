@@ -7,6 +7,7 @@
 
 from helpers.error import HamperError
 from helpers.driver import HamperDriver
+from helpers.date import HamperDate
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -23,6 +24,9 @@ class HamperProvisioner(object):
 
 	def generate_development_profile(self, app_id, profile_name):
 		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeDevelopment, app_id, profile_name)
+
+	def generate_app_store_profile(self, date, app_id, profile_name):
+		pass
 
 	def generate_provisioning_profile(self, profile_type, app_id, profile_name):
 		self.pick_profile_type(profile_type)
