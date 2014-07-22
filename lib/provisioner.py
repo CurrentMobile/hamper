@@ -25,15 +25,27 @@ class HamperProvisioner(object):
 	def generate_development_profile(self, app_id, profile_name):
 		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeDevelopment, app_id, profile_name)
 
-	def generate_app_store_profile(self, date, app_id, profile_name):
-		pass
+	def generate_app_store_profile(self, app_id, profile_name, expiration_date=None):
+		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAppStore, app_id, profile_name, date=expiration_date)
 
-	def generate_provisioning_profile(self, profile_type, app_id, profile_name):
+	def generate_adhoc_profile(self, app_id, profile_name, expiration_date=None):
+		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAdHoc, app_id, profile_name, date=expiration_date)
+
+	def generate_provisioning_profile(self, profile_type, app_id, profile_name, date=None):
 		self.pick_profile_type(profile_type)
 		self.select_app_id(app_id)
-		self.pick_development_signing_certificate()
-		self.pick_provisioned_devices()
+
+		if profile_type == HamperProvisioner.HPProfileTypeAppStore or profile_type == HamperProvisioner.HPProfileTypeAdHoc:
+			self.pick_distribution_signing_certificate(date.readable_date())
+		else:
+			self.pick_development_signing_certificate()
+		
+		# If we're generating a development or adhoc profile, we need to pick the provisioned devices
+		if profile_type == HamperProvisioner.HPProfileTypeDevelopment or profile_type == HamperProvisioner.HPProfileTypeAdHoc:
+			self.pick_provisioned_devices()
+
 		self.enter_profile_name(profile_name)
+
 		return self.download_provisioning_profile()
 
 	def pick_profile_type(self, profile_type):
@@ -133,6 +145,53 @@ class HamperProvisioner(object):
 
 		# Click the continue button
 		continue_button_element.click()
+
+	def pick_distribution_signing_certificate(self, date_string):
+		# Grab the HamperDriver singleton
+		driver = HamperDriver()
+
+		time.sleep(0.2)
+
+		# Select the table containing the available certificates
+		certificates_table = driver.find_element_by_css_selector('.form.table.distribution')
+
+		# Grab the container of the actual certificates
+		rows_div = certificates_table.find_element_by_class_name("rows")
+
+		# Use the xpath to grab all the child elements of rows_div
+		# The structure of the contents is like this: gist.github.com/KiranPanesar/a0221c00390b5bdaf5af
+		# Where <div class="status">May 22, 2015</div> is the example of an expiration date.
+		#
+		# We parse out all of the contents so for each certificate there are two divs. One containing the radio button,
+		# one for the expiration date.
+		available_certificates = rows_div.find_elements_by_xpath("./*")
+
+		# Create a radio_button in the general method scope
+		radio_button = None
+
+		# Loop through the rows in the table
+		for i in available_certificates:
+			# Check if the current row has the provided expiration date
+			if i.get_attribute("innerHTML") == date_string:
+				# If it does, get the element ABOVE the current one.
+				# Refer back to the structure of the contents (gist.github.com/KiranPanesar/a0221c00390b5bdaf5af)
+				current_date_index = available_certificates.index(i)
+
+				# Set the radio button to the above element
+				radio_button = available_certificates[current_date_index-1].find_element_by_xpath("./input")
+
+		# If the radio button is None, i.e. no certificate was selected/found, throw an error
+		try:
+			radio_button.click()
+		except Exception, e:
+			raise Exception(HamperError(HamperError.HECodeInvalidCertificateExpirationDate, "We could not find a distribution certificate with the specified date to sign the profile."))
+		
+		# Locate the Continue button on the page
+		continue_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
+
+		# Click the continue button
+		continue_button_element.click()
+
 
 	def pick_provisioned_devices(self):
 		# Grab the HamperDriver singleton
