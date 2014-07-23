@@ -14,10 +14,14 @@ class HamperAuthenticator(object):
 		super(HamperAuthenticator, self).__init__()
 
 	def sign_in(self, email=None, password=None):
+		print colored("Authenticating user...", "blue")
+		
+		# If no login credentials were provided
+		if not email or not password:
+			raise Exception(HamperError(HamperError.HECodeLogInError, "Either the email and/or password wasn't provided. Call 'hamper auth login' with the login credentials."))
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
-
-		print colored("Authenticating user...", "blue")
 
 		# Open the profile URL. This will forward to the sign in page if session is invalid
 		driver.get("https://developer.apple.com/account/ios/profile/")
