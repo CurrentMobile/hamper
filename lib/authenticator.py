@@ -4,6 +4,9 @@
 # or an error message on failure
 #
 from helpers.driver import HamperDriver
+from helpers.error import HamperError
+
+from termcolor import colored
 
 class HamperAuthenticator(object):
 
@@ -13,6 +16,8 @@ class HamperAuthenticator(object):
 	def sign_in(self, email=None, password=None):
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
+
+		print colored("Authenticating user...", "blue")
 
 		# Open the profile URL. This will forward to the sign in page if session is invalid
 		driver.get("https://developer.apple.com/account/ios/profile/")
@@ -24,3 +29,6 @@ class HamperAuthenticator(object):
 		password_element.send_keys(password)
 
 		driver.find_element_by_id("submitButton2").click()
+
+		if len(driver.find_elements_by_class_name("dserror")) > 0:
+			raise Exception(HamperError(HamperError.HECodeLogInError, driver.find_element_by_class_name("dserror").get_attribute("innerHTML"))) 
