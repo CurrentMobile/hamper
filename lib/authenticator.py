@@ -36,3 +36,5 @@ class HamperAuthenticator(object):
 
 		if len(driver.find_elements_by_class_name("dserror")) > 0:
 			raise Exception(HamperError(HamperError.HECodeLogInError, driver.find_element_by_class_name("dserror").get_attribute("innerHTML"))) 
+		else:
+			print colored("User successfully authenticated.", "green")
