@@ -12,6 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import time
 
+from termcolor import colored
 
 class HamperCertifier(object):
 
@@ -46,23 +47,36 @@ class HamperCertifier(object):
 	# Main method to run the submethods to generate the certificate.
 	#
 	def generate_certificate(self, certificate_type=HCCertificateTypeDistribution, app_id="", csr_path=""):
-
+		print colored("Generating certificate...", "blue")
 		# Grab the HamperDriver singleton
 		current_driver = HamperDriver()
 
+		print colored("Picking certificate type...", "blue")
+		
 		# Set the certificate_type property 
 		self.pick_certificate_type(current_driver, certificate_type)
 
 		# If we're going to generate a push certificate, we need to specify an app ID.
 		# This is an extra step in the Provisioning Profile process
 		if certificate_type == HamperCertifier.HCCertificateTypeDevelopmentPush or certificate_type == HamperCertifier.HCCertificateTypeDistributionPush:
+			print colored("Selecting application ID...", "blue")
 			self.select_app_id(current_driver, app_id)
+
+		print colored("Confirming CSR instructions...", "blue")
 
 		# Confirm the CSR generation instructions
 		self.confirm_csr_instructions(current_driver)
-
+		
+		print colored("Generating certificate (this could take a minute)...", "blue")
+		
 		# Generate, wait, and download the actual certificate. Return the URL.
-		return self.generate_and_download_certificate(current_driver, csr_path)
+		download_url = self.generate_and_download_certificate(current_driver, csr_path)
+		
+		if download_url and len(download_url) > 0:
+			print colored("Certificate successfully generated.", "green")
+			return download_url
+		else:
+			raise Exception(HamperError(1, "Could not generate certificate and/or certificate download URL."))
 
 	def pick_certificate_type(self, driver, certificate_type):
 		# This will trigger the provisioning portal to load this page: i.imgur.com/8RmehDm.png
