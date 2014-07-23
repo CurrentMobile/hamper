@@ -6,10 +6,10 @@
 # which makes it a pain to have multiple browser windows handle the process)
 #
 
-from selenium.webdriver.chrome.webdriver import WebDriver as Chrome
+from selenium.webdriver.phantomjs.webdriver import WebDriver as PhantomJS
 import singleton
 
-class HamperDriver(Chrome):
+class HamperDriver(PhantomJS):
 	__metaclass__ = singleton.HamperSingleton
 
 	def __init__(self):
