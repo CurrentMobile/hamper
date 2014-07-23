@@ -81,8 +81,45 @@ def handle_cert_action(arguments):
 		else:
 			print colored(e, "red")
 	
-def handle_identifier_action(arguments):
-	pass
+def handle_identifier_action(arguments):	
+	enabled_services_list = []
+
+	for service in arguments['--enabled_services']:
+		if service == "app_groups":
+			enabled_services_list.append(HamperIdentifier.HIServiceAppGroups)
+		elif service == "associated_domains":
+			enabled_services_list.append(HamperIdentifier.HIServiceAssociatedDomains)
+		elif service == "data_protection":
+			enabled_services_list.append(HamperIdentifier.HIServiceDataProtection)
+		elif service == "health_kit":
+			enabled_services_list.append(HamperIdentifier.HIServiceHealthKit)
+		elif service == "home_kit":
+			enabled_services_list.append(HamperIdentifier.HIServiceHomeKit)
+		elif service == "wireless_accessory_config":
+			enabled_services_list.append(HamperIdentifier.HIServiceWirelessAccessory)
+		elif service == "icloud":
+			enabled_services_list.append(HamperIdentifier.HIServiceiCloud)
+		elif service == "inter_app_audio":
+			enabled_services_list.append(HamperIdentifier.HIServiceInterAppAudio)
+		elif service == "passbook":
+			enabled_services_list.append(HamperIdentifier.HIServicePassbook)
+		elif service == "push":
+			enabled_services_list.append(HamperIdentifier.HIServicePushNotifications)
+		elif service == "vpn_config":
+			enabled_services_list.append(HamperIdentifier.HIServiceVPNConfiguration)
+
+	try:
+		cached_email, cached_password = cached_login_details()
+		h.authenticator.sign_in(email=cached_email, password=cached_password)
+
+		h.identifier.generate_app_id(arguments['--app_name'], arguments['--bundle_id'], enabled_services_list)
+
+	except Exception, e:
+		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
+			print colored("ERROR: " + e.args[0].message, "red")
+		else:
+			print colored(e, "red")
+
 
 def handle_profile_action(arguments):
 	pass
