@@ -1,6 +1,5 @@
 #!/usr/local/bin/python
 
-
 """
 
 Hamper
@@ -21,9 +20,11 @@ from provisioner import HamperProvisioner
 
 from helpers.driver import HamperDriver
 from helpers.date import HamperDate
+from helpers.error import HamperError
 
 # Used for building the CLI
 from docopt import docopt
+from termcolor import colored
 
 class Hamper(object):
 	def __init__(self):
@@ -34,9 +35,38 @@ class Hamper(object):
 		self.identifier    = HamperIdentifier()
 		self.provisioner   = HamperProvisioner()
 
-# h = Hamper()
-# h.authenticator.sign_in(email='', password='')
+h = Hamper()
+
+def handle_auth_action(arguments):
+	try:
+		h.authenticator.sign_in(email=arguments['--email'], password=arguments['--password'])
+		print colored("User successfully authenticated.", "green")
+	except Exception, e:
+		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
+			print colored(e.args[0].message, "red")
+		else:
+			print colored(e, "red")
+		
+
+def handle_cert_action(arguments):
+	pass
+	
+def handle_identifier_action(arguments):
+	pass
+
+def handle_profile_action(arguments):
+	pass
+
+def parse_arguments(arguments):
+	if arguments['auth'] == True:
+		handle_auth_action(arguments)	
+	elif arguments['cert'] == True:
+		handle_cert_action(arguments)
+	elif arguments['identifier'] == True:
+		handle_identifier_action(arguments)
+	elif arguments['profile'] == True:
+		handle_profile_action(arguments)
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Hamper 0.1')
-    print(arguments)
+    parse_arguments(arguments)
