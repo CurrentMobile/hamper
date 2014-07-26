@@ -29,5 +29,5 @@ class HamperDate(object):
 		self.year  = year
 
 	def readable_date(self):
-		if self.month < len(HamperDate.HDAbbreviatedMonthsList):
-			return HamperDate.HDAbbreviatedMonthsList[self.month-1] + " " +str(self.day) + ", " + str(self.year)
+		if int(self.month) < len(HamperDate.HDAbbreviatedMonthsList):
+			return HamperDate.HDAbbreviatedMonthsList[int(self.month)-1] + " " + self.day + ", " + self.year
