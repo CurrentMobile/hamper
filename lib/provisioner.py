@@ -14,6 +14,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import time
 
+# For CLI
+
+from termcolor import colored
+
 class HamperProvisioner(object):
 
 	HPProfileTypeDevelopment  = 0
@@ -33,6 +37,8 @@ class HamperProvisioner(object):
 		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAdHoc, app_id, profile_name, date=expiration_date)
 
 	def generate_provisioning_profile(self, profile_type, app_id, profile_name, date=None):
+		print colored("Generating provisioning profile...", "blue")
+
 		self.pick_profile_type(profile_type)
 		self.select_app_id(app_id)
 
@@ -50,7 +56,8 @@ class HamperProvisioner(object):
 		return self.download_provisioning_profile()
 
 	def pick_profile_type(self, profile_type):
-		
+		print colored("Picking profile type...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -81,7 +88,8 @@ class HamperProvisioner(object):
 		submit_button_element.click()
 
 	def select_app_id(self, app_id):
-		
+		print colored("Selecting app ID...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -127,6 +135,8 @@ class HamperProvisioner(object):
 		continue_button_element.click()
 
 	def pick_development_signing_certificate(self):
+		print colored("Picking development certificate...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -148,6 +158,8 @@ class HamperProvisioner(object):
 		continue_button_element.click()
 
 	def pick_distribution_signing_certificate(self, date):
+		print colored("Picking distribution certfificate...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -169,7 +181,7 @@ class HamperProvisioner(object):
 
 		# Create a radio_button in the general method scope
 		radio_button = None	
-	
+		
 		if date:
 			# Store the stringified version of the date, so it isn't generated on every loop iteration
 			date_string = date.readable_date()
@@ -193,7 +205,7 @@ class HamperProvisioner(object):
 		try:
 			radio_button.click()
 		except Exception, e:
-			raise Exception(HamperError(HamperError.HECodeInvalidCertificateExpirationDate, "We could not find a distribution certificate with the specified date to sign the profile."))
+			raise Exception(HamperError(HamperError.HECodeInvalidCertificateExpirationDate, "We could not find a distribution certificate with the specified date (" + date.readable_date() + ") to sign the profile."))
 		
 		# Locate the Continue button on the page
 		continue_button_element = driver.find_element_by_css_selector(".button.small.blue.right.submit")
@@ -203,6 +215,8 @@ class HamperProvisioner(object):
 
 
 	def pick_provisioned_devices(self):
+		print colored("Selecting provisioned devices...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -224,6 +238,8 @@ class HamperProvisioner(object):
 		continue_button_element.click()
 
 	def enter_profile_name(self, profile_name):
+		print colored("Naming provisioning profile...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -239,6 +255,8 @@ class HamperProvisioner(object):
 		continue_button_element.click()
 
 	def download_provisioning_profile(self):
+		print colored("Waiting for Apple to generate profile (this could take a minute)...", "blue")
+
 		# Grab the HamperDriver singleton
 		driver = HamperDriver()
 
@@ -249,6 +267,8 @@ class HamperProvisioner(object):
 		# Find the download button, grab the download URL		
 		download_button_element = driver.find_element_by_css_selector(".button.small.blue")
 		download_url = download_button_element.get_attribute("href")
-	
+
+		print colored("Provisioning profile successfully generated.", "green")
+
 		# Return the download URL
 		return download_url
