@@ -1,4 +1,7 @@
 *.pyc
-lib/session
-lib/ghostdriver.log
+ghostdriver.log
+hamper/session
+hamper/ghostdriver.log
+build/
+dist/
 *.DS_Store

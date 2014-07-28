@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 
 """
 
@@ -204,6 +204,6 @@ def parse_arguments(arguments):
 		else:
 			print colored(e, "red")
 
-if __name__ == '__main__':
+def pack():
     arguments = docopt(__doc__, version='Hamper 0.1')
     parse_arguments(arguments)
