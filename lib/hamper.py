@@ -150,27 +150,35 @@ def handle_identifier_action(arguments):
 	# Generate the app ID with the provided details
 	h.identifier.generate_app_id(arguments['--app_name'], arguments['--bundle_id'], enabled_services_list)
 
-
+#
+# Called when the user tries 'hamper profile ...'
+# Handles the creation of provisioning profiles
+#
 def handle_profile_action(arguments):
-	try:
-		cached_email, cached_password = cached_login_details()
-		h.authenticator.sign_in(email=cached_email, password=cached_password)
+	# Fetch the cached username and password
+	cached_email, cached_password = cached_login_details()
 
-		if arguments['development']:
-			h.provisioner.generate_development_profile(arguments['--bundle_id'], arguments['--name'])
-		elif arguments['app_store']:
-			date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
-			print date.readable_date()
-			h.provisioner.generate_app_store_profile(arguments['--bundle_id'], arguments['--name'], date)
-		elif arguments['ad_hoc']:
-			date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
-			h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], date)
+	# Start the user's session
+	h.authenticator.sign_in(email=cached_email, password=cached_password)
 
-	except Exception, e:
-		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
-			print colored("ERROR: " + e.args[0].message, "red")
-		else:
-			print colored(e, "red")
+	# Figure out whether the user is requesting a development, App Store, or AdHoc provisioning profile
+	if arguments['development']:
+
+		# Generate the development provisioning profile
+		h.provisioner.generate_development_profile(arguments['--bundle_id'], arguments['--name'])
+	elif arguments['app_store']:
+
+		# Parse out the expiration date of the certificate to use when creating the provisioning profile
+		date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
+
+		# Generate the App Store provisioning profile
+		h.provisioner.generate_app_store_profile(arguments['--bundle_id'], arguments['--name'], date)
+	elif arguments['ad_hoc']:
+		# Parse out the expiration date of the certificate to use when creating the provisioning profile
+		date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
+
+		# Generate the AdHoc provisioning profile
+		h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], date)
 
 def parse_arguments(arguments):
 	try:
