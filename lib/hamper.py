@@ -180,8 +180,13 @@ def handle_profile_action(arguments):
 		# Generate the AdHoc provisioning profile
 		h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], date)
 
+#
+# Parent method to parse out the required action, and call the appropriate method
+#
 def parse_arguments(arguments):
+	# Wrap in a try-catch so we can print a pretty error message to the console if necessary
 	try:
+		# Find the action being requested
 		if arguments['auth'] == True:
 			handle_auth_action(arguments)	
 		elif arguments['cert'] == True:
@@ -191,6 +196,9 @@ def parse_arguments(arguments):
 		elif arguments['profile'] == True:
 			handle_profile_action(arguments)
 	except Exception, e:
+
+		# If there is a HamperError instance being passed as an argument,
+		# grab the error message of that and print that to the console.
 		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
 			print colored("ERROR: " + e.args[0].message, "red")
 		else:
