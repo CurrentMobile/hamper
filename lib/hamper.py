@@ -82,10 +82,19 @@ def handle_auth_action(arguments):
 	# If the sign in was successful, save the credentials to the keychain and session file
 	save_login_details(arguments['--email'], arguments['--password'])
 		
+#
+# Called when the user tries 'hamper cert ...'
+# Handles the generation of certificates
+#
 def handle_cert_action(arguments):
+
+	# Fetch the cached username and password
 	cached_email, cached_password = cached_login_details()
+
+	# Start the user's session
 	h.authenticator.sign_in(email=cached_email, password=cached_password)
 
+	# Find which certificate the user is requesting, generate accordingly
 	if arguments['development']:
 		h.certifier.generate_development_certificate(arguments['--csr_path'])
 
@@ -97,7 +106,7 @@ def handle_cert_action(arguments):
 
 	elif arguments['distribution_push']:
 		h.certifier.generate_distribution_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
-	
+
 def handle_identifier_action(arguments):	
 	enabled_services_list = []
 
