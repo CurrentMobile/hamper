@@ -107,9 +107,16 @@ def handle_cert_action(arguments):
 	elif arguments['distribution_push']:
 		h.certifier.generate_distribution_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
 
+#
+# Called when the user tries 'hamper identifier ...'
+# Handles the generation of the app IDs
+#
 def handle_identifier_action(arguments):	
+
+	# Create empty list to hold the translated enabled services
 	enabled_services_list = []
 
+	# Loop though each enabled service, adding the translated value to the list
 	for service in arguments['--enabled_services']:
 		if service == "app_groups":
 			enabled_services_list.append(HamperIdentifier.HIServiceAppGroups)
@@ -133,18 +140,15 @@ def handle_identifier_action(arguments):
 			enabled_services_list.append(HamperIdentifier.HIServicePushNotifications)
 		elif service == "vpn_config":
 			enabled_services_list.append(HamperIdentifier.HIServiceVPNConfiguration)
+	
+	# Fetch the cached username and password
+	cached_email, cached_password = cached_login_details()
 
-	try:
-		cached_email, cached_password = cached_login_details()
-		h.authenticator.sign_in(email=cached_email, password=cached_password)
+	# Start the user's session
+	h.authenticator.sign_in(email=cached_email, password=cached_password)
 
-		h.identifier.generate_app_id(arguments['--app_name'], arguments['--bundle_id'], enabled_services_list)
-
-	except Exception, e:
-		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
-			print colored("ERROR: " + e.args[0].message, "red")
-		else:
-			print colored(e, "red")
+	# Generate the app ID with the provided details
+	h.identifier.generate_app_id(arguments['--app_name'], arguments['--bundle_id'], enabled_services_list)
 
 
 def handle_profile_action(arguments):
