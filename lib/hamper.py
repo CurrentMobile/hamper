@@ -83,26 +83,20 @@ def handle_auth_action(arguments):
 	save_login_details(arguments['--email'], arguments['--password'])
 		
 def handle_cert_action(arguments):
-	try:
-		cached_email, cached_password = cached_login_details()
-		h.authenticator.sign_in(email=cached_email, password=cached_password)
+	cached_email, cached_password = cached_login_details()
+	h.authenticator.sign_in(email=cached_email, password=cached_password)
 
-		if arguments['development']:
-			h.certifier.generate_development_certificate(arguments['--csr_path'])
+	if arguments['development']:
+		h.certifier.generate_development_certificate(arguments['--csr_path'])
 
-		elif arguments['development_push']:
-			h.certifier.generate_development_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
+	elif arguments['development_push']:
+		h.certifier.generate_development_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
 
-		elif arguments['distribution']:
-			h.certifier.generate_distribution_certificate(arguments['--csr_path'])
+	elif arguments['distribution']:
+		h.certifier.generate_distribution_certificate(arguments['--csr_path'])
 
-		elif arguments['distribution_push']:
-			h.certifier.generate_distribution_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
-	except Exception, e:
-		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
-			print colored("ERROR: " + e.args[0].message, "red")
-		else:
-			print colored(e, "red")
+	elif arguments['distribution_push']:
+		h.certifier.generate_distribution_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
 	
 def handle_identifier_action(arguments):	
 	enabled_services_list = []
