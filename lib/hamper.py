@@ -49,7 +49,7 @@ def save_login_details(email, password):
 	keyring.set_password("hamper", email, password)
 
 	# Store the current email address being used to a text file.
-	# This allows us to maintain a persistant 'session'.
+	# This allows us to maintain a persistent 'session'.
 	# When the user tries to execute a Hamper action (create a certificate, for example), Hamper will find the 
 	# cached email address stored in the 'session' file, then fetch the corresponding password from the keychain.
 	# Then, Hamper will run the HamperAuthenticator method with these credentials to sign the user in and create the WebDriver session.
