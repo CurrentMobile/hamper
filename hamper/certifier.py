@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 from termcolor import colored
+import urllib
 
 class HamperCertifier(object):
 
@@ -32,22 +33,24 @@ class HamperCertifier(object):
 	# Shortcut methods to create the desired certificate
 	# instead of calling generate_certificate with a bunch of params
 	#
-	def generate_development_certificate(self, csr_file):
-		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDevelopment, csr_path=csr_file)
+	def generate_development_certificate(self, csr_file, cert_path):
+		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDevelopment, csr_path=csr_file, certificate_path=cert_path)
 	
-	def generate_development_push_certificate(self, application_id, csr_file):
-		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDevelopmentPush, app_id=application_id, csr_path=csr_file)
+	def generate_development_push_certificate(self, application_id, csr_file, cert_path):
+		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDevelopmentPush, app_id=application_id, csr_path=csr_file, certificate_path=cert_path)
 
-	def generate_distribution_certificate(self, csr_file):
-		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistribution, csr_path=csr_file)
+	def generate_distribution_certificate(self, csr_file, cert_path):
+		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistribution, csr_path=csr_file, certificate_path=cert_path)
 	
-	def generate_distribution_push_certificate(self, application_id, csr_file):
-		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistributionPush, app_id=application_id, csr_path=csr_file)
+	def generate_distribution_push_certificate(self, application_id, csr_file, cert_path):
+		return self.generate_certificate(certificate_type=HamperCertifier.HCCertificateTypeDistributionPush, app_id=application_id, csr_path=csr_file, certificate_path=cert_path)
 	#
 	# Main method to run the submethods to generate the certificate.
 	#
-	def generate_certificate(self, certificate_type=HCCertificateTypeDistribution, app_id="", csr_path=""):
+	def generate_certificate(self, certificate_type=HCCertificateTypeDistribution, app_id="", csr_path="", certificate_path=""):
+
 		print colored("Generating certificate...", "blue")
+
 		# Grab the HamperDriver singleton
 		current_driver = HamperDriver()
 
@@ -70,11 +73,18 @@ class HamperCertifier(object):
 		print colored("Generating certificate (this could take a minute)...", "blue")
 		
 		# Generate, wait, and download the actual certificate. Return the URL.
-		download_url = self.generate_and_download_certificate(current_driver, csr_path)
+		download_url = self.confirm_certificate_generation(current_driver, csr_path)
 		
 		if download_url and len(download_url) > 0:
 			print colored("Certificate successfully generated.", "green")
-			return download_url
+			
+			print colored("Downloading certificate (this could take a minute)...", "blue")
+			
+			# Download the certificate to the user-defined path
+			self.download_certificate(current_driver, download_url, certificate_path)
+
+			print colored("Certificate successfully downloaded (" + certificate_path + ").", "green")
+
 		else:
 			raise Exception(HamperError(1, "Could not generate certificate and/or certificate download URL."))
 
@@ -173,7 +183,7 @@ class HamperCertifier(object):
 		# Click the Continue button
 		continue_button_element.click()
 
-	def generate_and_download_certificate(self, driver, csr_path):
+	def confirm_certificate_generation(self, driver, csr_path):
 		# -------
 		#	Browser is now at this page:
 		#	http://i.imgur.com/xzeQEZA.png
@@ -203,3 +213,19 @@ class HamperCertifier(object):
 	
 		# Return the download URL
 		return download_url
+
+	def download_certificate(self, driver, download_url, cert_path):
+
+		# Create a URLOpener object
+		opener = urllib.URLopener()
+		
+		# Grab all the cookies from Selenium
+		all_cookies = driver.get_cookies()
+
+		# Loop through each cookie
+		for cookie in all_cookies:
+			# Add the cookie to the URLOpener instance
+			opener.addheaders.append(('Cookie', cookie['name'] + "=" + cookie['value']))
+
+		# Save the certificate file into the user-defined path
+		opener.retrieve(download_url, cert_path)

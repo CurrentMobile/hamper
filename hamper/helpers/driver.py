@@ -7,6 +7,7 @@
 #
 
 from selenium.webdriver.phantomjs.webdriver import WebDriver as PhantomJS
+
 import singleton
 
 class HamperDriver(PhantomJS):

@@ -6,7 +6,7 @@ Hamper
 
 Usage:
   hamper.py auth login --email=<email> --password=<password>
-  hamper.py cert create (development | development_push | distribution | distribution_push) --csr_path=<csr_path> [--bundle_id=<bundle_id>]
+  hamper.py cert create (development | development_push | distribution | distribution_push) --csr_path=<csr_path> --cert_path=<cert_path> [--bundle_id=<bundle_id>]
   hamper.py identifier create --app_name=<app_name> --bundle_id=<bundle_id> [--enabled_services=<app_service>...]
   hamper.py profile create (development | app_store | ad_hoc) --name=<profile_name> --bundle_id=<bundle_id> [(--exp_day=<exp_day> --exp_month=<exp_month> --exp_year=<exp_year>)]
 
@@ -28,6 +28,9 @@ from termcolor import colored
 
 # Used for access the computer's keychain (for storing login credentials)
 import keyring
+
+# Used to determine the file's current path (not directory of user when exec'ing via Terminal)
+import inspect, os
 
 # Create the class for holding all the Hamper instances
 class Hamper(object):
@@ -53,14 +56,19 @@ def save_login_details(email, password):
 	# When the user tries to execute a Hamper action (create a certificate, for example), Hamper will find the 
 	# cached email address stored in the 'session' file, then fetch the corresponding password from the keychain.
 	# Then, Hamper will run the HamperAuthenticator method with these credentials to sign the user in and create the WebDriver session.
-	open('session', 'w').close()
-	open("session", "w").write(email)
+
+	script_directory = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+	open(script_directory + "/session", "w").close()
+	open(script_directory + "/session", "w").write(email)
 
 # Helper method to fetch the cached login details
 def cached_login_details():
 
+	script_directory = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
 	# Get the currently-auth'd email address
-	with open('session', 'r') as content_file:
+	with open(script_directory + "/session", 'r') as content_file:
 		content = content_file.read()
 
 		# Grab the login credentials from the keychain
@@ -96,16 +104,16 @@ def handle_cert_action(arguments):
 
 	# Find which certificate the user is requesting, generate accordingly
 	if arguments['development']:
-		h.certifier.generate_development_certificate(arguments['--csr_path'])
+		h.certifier.generate_development_certificate(arguments['--csr_path'], arguments['--cert_path'])
 
 	elif arguments['development_push']:
-		h.certifier.generate_development_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
+		h.certifier.generate_development_push_certificate(arguments['--bundle_id'], arguments['--csr_path'], arguments['--cert_path'])
 
 	elif arguments['distribution']:
-		h.certifier.generate_distribution_certificate(arguments['--csr_path'])
+		h.certifier.generate_distribution_certificate(arguments['--csr_path'], arguments['--cert_path'])
 
 	elif arguments['distribution_push']:
-		h.certifier.generate_distribution_push_certificate(arguments['--bundle_id'], arguments['--csr_path'])
+		h.certifier.generate_distribution_push_certificate(arguments['--bundle_id'], arguments['--csr_path'], arguments['--cert_path'])
 
 #
 # Called when the user tries 'hamper identifier ...'
@@ -205,5 +213,9 @@ def parse_arguments(arguments):
 			print colored(e, "red")
 
 def pack():
+    arguments = docopt(__doc__, version='Hamper 0.1')
+    parse_arguments(arguments)
+
+if __name__ == '__main__':
     arguments = docopt(__doc__, version='Hamper 0.1')
     parse_arguments(arguments)
