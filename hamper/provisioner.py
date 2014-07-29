@@ -287,3 +287,5 @@ class HamperProvisioner(object):
 
 		# Save the profile file into the user-defined path
 		opener.retrieve(download_url, file_path)
+
+		print colored("Profile successfully downloaded (" + file_path + ").", "green")
