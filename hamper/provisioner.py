@@ -285,5 +285,5 @@ class HamperProvisioner(object):
 			# Add the cookie to the URLOpener instance
 			opener.addheaders.append(('Cookie', cookie['name'] + "=" + cookie['value']))
 
-		# Save the certificate file into the user-defined path
+		# Save the profile file into the user-defined path
 		opener.retrieve(download_url, file_path)
