@@ -213,9 +213,9 @@ def parse_arguments(arguments):
 			print colored(e, "red")
 
 def pack():
-    arguments = docopt(__doc__, version='Hamper 0.1')
+    arguments = docopt(__doc__, version='Hamper 0.1.5')
     parse_arguments(arguments)
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__, version='Hamper 0.1')
+    arguments = docopt(__doc__, version='Hamper 0.1.5')
     parse_arguments(arguments)
