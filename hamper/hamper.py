@@ -8,7 +8,7 @@ Usage:
   hamper.py auth login --email=<email> --password=<password>
   hamper.py cert create (development | development_push | distribution | distribution_push) --csr_path=<csr_path> --cert_path=<cert_path> [--bundle_id=<bundle_id>]
   hamper.py identifier create --app_name=<app_name> --bundle_id=<bundle_id> [--enabled_services=<app_service>...]
-  hamper.py profile create (development | app_store | ad_hoc) --name=<profile_name> --bundle_id=<bundle_id> [(--exp_day=<exp_day> --exp_month=<exp_month> --exp_year=<exp_year>)]
+  hamper.py profile create (development | app_store | ad_hoc) --name=<profile_name> --bundle_id=<bundle_id> --profile_path=<profile_path> [(--exp_day=<exp_day> --exp_month=<exp_month> --exp_year=<exp_year>)]
 
 """
 
@@ -173,20 +173,20 @@ def handle_profile_action(arguments):
 	if arguments['development']:
 
 		# Generate the development provisioning profile
-		h.provisioner.generate_development_profile(arguments['--bundle_id'], arguments['--name'])
+		h.provisioner.generate_development_profile(arguments['--bundle_id'], arguments['--name'], arguments['--profile_path'])
 	elif arguments['app_store']:
 
 		# Parse out the expiration date of the certificate to use when creating the provisioning profile
 		date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
 
 		# Generate the App Store provisioning profile
-		h.provisioner.generate_app_store_profile(arguments['--bundle_id'], arguments['--name'], date)
+		h.provisioner.generate_app_store_profile(arguments['--bundle_id'], arguments['--name'], profile_path, date)
 	elif arguments['ad_hoc']:
 		# Parse out the expiration date of the certificate to use when creating the provisioning profile
 		date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
 
 		# Generate the AdHoc provisioning profile
-		h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], date)
+		h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], profile_path, date)
 
 #
 # Parent method to parse out the required action, and call the appropriate method

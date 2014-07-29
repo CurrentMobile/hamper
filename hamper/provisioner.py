@@ -14,6 +14,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import time
 
+import urllib
+
 # For CLI
 
 from termcolor import colored
@@ -27,16 +29,16 @@ class HamperProvisioner(object):
 	def __init__(self):
 		super(HamperProvisioner, self).__init__()
 
-	def generate_development_profile(self, app_id, profile_name):
-		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeDevelopment, app_id, profile_name)
+	def generate_development_profile(self, app_id, profile_name, profile_path):
+		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeDevelopment, app_id, profile_name, profile_path)
 
-	def generate_app_store_profile(self, app_id, profile_name, expiration_date=None):
-		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAppStore, app_id, profile_name, date=expiration_date)
+	def generate_app_store_profile(self, app_id, profile_name, profile_path, expiration_date=None):
+		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAppStore, app_id, profile_name, profile_path, date=expiration_date)
 
-	def generate_adhoc_profile(self, app_id, profile_name, expiration_date=None):
-		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAdHoc, app_id, profile_name, date=expiration_date)
+	def generate_adhoc_profile(self, app_id, profile_name, profile_path, expiration_date=None):
+		return self.generate_provisioning_profile(HamperProvisioner.HPProfileTypeAdHoc, app_id, profile_name, profile_path, date=expiration_date)
 
-	def generate_provisioning_profile(self, profile_type, app_id, profile_name, date=None):
+	def generate_provisioning_profile(self, profile_type, app_id, profile_name, profile_path, date=None):
 		print colored("Generating provisioning profile...", "blue")
 
 		self.pick_profile_type(profile_type)
@@ -53,7 +55,7 @@ class HamperProvisioner(object):
 
 		self.enter_profile_name(profile_name)
 
-		return self.download_provisioning_profile()
+		return self.download_provisioning_profile(profile_path)
 
 	def pick_profile_type(self, profile_type):
 		print colored("Picking profile type...", "blue")
@@ -254,7 +256,7 @@ class HamperProvisioner(object):
 		# Click the continue button
 		continue_button_element.click()
 
-	def download_provisioning_profile(self):
+	def download_provisioning_profile(self, file_path):
 		print colored("Waiting for Apple to generate profile (this could take a minute)...", "blue")
 
 		# Grab the HamperDriver singleton
@@ -270,5 +272,18 @@ class HamperProvisioner(object):
 
 		print colored("Provisioning profile successfully generated.", "green")
 
-		# Return the download URL
-		return download_url
+		print colored("Downloading provisioning profile...", "blue")
+
+		# Create a URLOpener object
+		opener = urllib.URLopener()
+		
+		# Grab all the cookies from Selenium
+		all_cookies = driver.get_cookies()
+
+		# Loop through each cookie
+		for cookie in all_cookies:
+			# Add the cookie to the URLOpener instance
+			opener.addheaders.append(('Cookie', cookie['name'] + "=" + cookie['value']))
+
+		# Save the certificate file into the user-defined path
+		opener.retrieve(download_url, file_path)
