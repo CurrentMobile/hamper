@@ -57,18 +57,17 @@ def save_login_details(email, password):
 	# cached email address stored in the 'session' file, then fetch the corresponding password from the keychain.
 	# Then, Hamper will run the HamperAuthenticator method with these credentials to sign the user in and create the WebDriver session.
 
-	script_directory = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+	home_directory = os.path.expanduser("~")
 
-	open(script_directory + "/session", "w").close()
-	open(script_directory + "/session", "w").write(email)
+	open(home_directory + "/.hamper_session", "w").close()
+	open(home_directory + "/.hamper_session", "w").write(email)
 
 # Helper method to fetch the cached login details
 def cached_login_details():
-
-	script_directory = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+	home_directory = os.path.expanduser("~")
 
 	# Get the currently-auth'd email address
-	with open(script_directory + "/session", 'r') as content_file:
+	with open(home_directory + "/.hamper_session", 'w') as content_file:
 		content = content_file.read()
 
 		# Grab the login credentials from the keychain
