@@ -12,7 +12,8 @@ setup(
     install_requires=[
       "selenium",
       "docopt",
-      "termcolor"
+      "termcolor",
+      "keyring"
     ],
     entry_points={
       'console_scripts': [
