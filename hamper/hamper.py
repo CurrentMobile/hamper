@@ -59,15 +59,15 @@ def save_login_details(email, password):
 
 	home_directory = os.path.expanduser("~")
 
-	open(home_directory + "/.hamper_session", "w").close()
-	open(home_directory + "/.hamper_session", "w").write(email)
+	with open(home_directory + "/.hamper_session", "w+") as content_file:
+		content_file.write(email)
 
 # Helper method to fetch the cached login details
 def cached_login_details():
 	home_directory = os.path.expanduser("~")
 
 	# Get the currently-auth'd email address
-	with open(home_directory + "/.hamper_session", 'w') as content_file:
+	with open(home_directory + "/.hamper_session", 'r') as content_file:
 		content = content_file.read()
 
 		# Grab the login credentials from the keychain
