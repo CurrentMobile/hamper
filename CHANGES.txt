@@ -2,3 +2,4 @@ v0.1, 07/28/2014 -- Initial release.
 v0.1.5, 07/29/2014 -- Hamper now downloads certificates/profiles to a specified filepath.
 v0.1.6, 07/31/2014 -- Fixed the user's session storage (saving session email in invisible file)
 v1.0.0, 08/04/2014 -- Added docs, marked build for v1.0 release!
+v1.0.1  08/22/2014 -- Fixed session file access type (now doesn't erase session file)
