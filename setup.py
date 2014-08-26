@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='HamperCLI',
-    version='1.0.1',
+    version='1.0.2',
     author='Kiran Panesar',
     author_email='kiransinghpanesar@googlemail.com',
     packages=['hamper', 'hamper/helpers'],
