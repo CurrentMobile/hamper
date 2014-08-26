@@ -30,7 +30,7 @@ from termcolor import colored
 import keyring
 
 # Used to determine the file's current path (not directory of user when exec'ing via Terminal)
-import inspect, os
+import inspect, os, sys
 
 # Create the class for holding all the Hamper instances
 class Hamper(object):
@@ -203,13 +203,13 @@ def parse_arguments(arguments):
 		elif arguments['profile'] == True:
 			handle_profile_action(arguments)
 	except Exception, e:
-
 		# If there is a HamperError instance being passed as an argument,
 		# grab the error message of that and print that to the console.
 		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
 			print colored("ERROR: " + e.args[0].message, "red")
 		else:
 			print colored(e, "red")
+		sys.exit(3)
 
 def pack():
     arguments = docopt(__doc__, version='Hamper 0.1.5')
