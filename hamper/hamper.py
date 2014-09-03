@@ -179,13 +179,13 @@ def handle_profile_action(arguments):
 		date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
 
 		# Generate the App Store provisioning profile
-		h.provisioner.generate_app_store_profile(arguments['--bundle_id'], arguments['--name'], profile_path, date)
+		h.provisioner.generate_app_store_profile(arguments['--bundle_id'], arguments['--name'], arguments['--profile_path'], date)
 	elif arguments['ad_hoc']:
 		# Parse out the expiration date of the certificate to use when creating the provisioning profile
 		date = HamperDate(month=arguments['--exp_month'], day=arguments['--exp_day'], year=arguments['--exp_year'])
 
 		# Generate the AdHoc provisioning profile
-		h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], profile_path, date)
+		h.provisioner.generate_adhoc_profile(arguments['--bundle_id'], arguments['--name'], arguments['--profile_path'], date)
 
 #
 # Parent method to parse out the required action, and call the appropriate method
