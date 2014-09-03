@@ -78,42 +78,45 @@ class HamperIdentifier(object):
 
 	# Method to click the continue 'button' to move to the confirmation step
 	def click_continue_button(self):
+		current_url = self.driver.current_url
 		continue_button = self.driver.find_element_by_class_name("submit")
 		continue_button.click()
 
 		# Wait until all page content has been added
 		time.sleep(0.2)
 
-		# Load the error form elements from the page
-		error_elements = self.driver.find_elements_by_class_name("form-error")
+		# If we're still stuck on the same page, scan it for errors.
+		if current_url == self.driver.current_url:		
+			# Load the error form elements from the page
+			error_elements = self.driver.find_elements_by_class_name("form-error")
 
-		# Are there any error elements? If so, fetch them and return them.
-		# If there aren't any errors, we can assume the page moved on successfully.
-		if len(error_elements) > 0:
+			# Are there any error elements? If so, fetch them and return them.
+			# If there aren't any errors, we can assume the page moved on successfully.
+			if len(error_elements) > 0:
 
-			print "FORM ERRORS FOUND"
-			print error_elements
+				print "FORM ERRORS FOUND"
+				print error_elements
 
-			# Create a list to store the actual errors 
-			# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
-			errors_list = []
+				# Create a list to store the actual errors 
+				# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
+				errors_list = []
 
-			# Loop through the elements to see which ones are on-screen
-			for element in error_elements:
+				# Loop through the elements to see which ones are on-screen
+				for element in error_elements:
 
-				# The hackiest way to check error visibility
-				# Check whether the style of the component is visible
-				if "display: none" not in element.get_attribute("style"):
+					# The hackiest way to check error visibility
+					# Check whether the style of the component is visible
+					if "display: none" not in element.get_attribute("style"):
 
-					# If it is visible, append the error message
-					errors_list.append(element.get_attribute("innerHTML"))
+						# If it is visible, append the error message
+						errors_list.append(element.get_attribute("innerHTML"))
 
-			# Were there any actual errors?
-			if len(errors_list) > 0:
-				print "PARSED LIST HAS ERRORS"
-				print errors_list
-				# Raise an exception with the error codes
-				raise Exception(HamperError(1, str(errors_list)))
+				# Were there any actual errors?
+				if len(errors_list) > 0:
+					print "PARSED LIST HAS ERRORS"
+					print errors_list
+					# Raise an exception with the error codes
+					raise Exception(HamperError(1, str(errors_list)))
 		
 	# Confirm the creation of the app ID
 	def click_submit_button(self):
