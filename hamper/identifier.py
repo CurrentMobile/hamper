@@ -82,36 +82,34 @@ class HamperIdentifier(object):
 		continue_button.click()
 
 		# Wait until all page content has been added
-		time.sleep(2)
+		time.sleep(0.2)
 
-		# If we've moved onto the next page in the process, there's not been an error
-		if "formID=1469461" not in self.driver.current_url:
-			print "Didn't move on to next form"
-			# Load the error form elements from the page
-			error_elements = self.driver.find_elements_by_class_name("form-error")
+		# Load the error form elements from the page
+		error_elements = self.driver.find_elements_by_class_name("form-error")
 
-			# Are there any error elements?
-			if len(error_elements) > 0:
+		# Are there any error elements? If so, fetch them and return them.
+		# If there aren't any errors, we can assume the page moved on successfully.
+		if len(error_elements) > 0:
 
-				# Create a list to store the actual errors 
-				# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
-				errors_list = []
+			# Create a list to store the actual errors 
+			# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
+			errors_list = []
 
-				# Loop through the elements to see which ones are on-screen
-				for element in error_elements:
+			# Loop through the elements to see which ones are on-screen
+			for element in error_elements:
 
-					# The hackiest way to check error visibility
-					# Check whether the style of the component is visible
-					if "display: none" not in element.get_attribute("style"):
+				# The hackiest way to check error visibility
+				# Check whether the style of the component is visible
+				if "display: none" not in element.get_attribute("style"):
 
-						# If it is visible, append the error message
-						errors_list.append(element.get_attribute("innerHTML"))
+					# If it is visible, append the error message
+					errors_list.append(element.get_attribute("innerHTML"))
 
-				# Were there any actual errors?
-				if len(errors_list) > 0:
-					# Raise an exception with the error codes
-					raise Exception(HamperError(1, str(errors_list)))
-	
+			# Were there any actual errors?
+			if len(errors_list) > 0:
+				# Raise an exception with the error codes
+				raise Exception(HamperError(1, str(errors_list)))
+		
 	# Confirm the creation of the app ID
 	def click_submit_button(self):
 		time.sleep(0.5)
