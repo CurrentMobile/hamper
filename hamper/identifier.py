@@ -93,10 +93,6 @@ class HamperIdentifier(object):
 			# Are there any error elements? If so, fetch them and return them.
 			# If there aren't any errors, we can assume the page moved on successfully.
 			if len(error_elements) > 0:
-
-				print "FORM ERRORS FOUND"
-				print error_elements
-
 				# Create a list to store the actual errors 
 				# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
 				errors_list = []
@@ -113,8 +109,6 @@ class HamperIdentifier(object):
 
 				# Were there any actual errors?
 				if len(errors_list) > 0:
-					print "PARSED LIST HAS ERRORS"
-					print errors_list
 					# Raise an exception with the error codes
 					raise Exception(HamperError(1, str(errors_list)))
 		
@@ -123,5 +117,4 @@ class HamperIdentifier(object):
 		time.sleep(0.5)
 
 		submit_button = self.driver.find_element_by_css_selector(".button.small.blue.right.submit")
-		print submit_button
 		submit_button.click()

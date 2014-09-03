@@ -203,14 +203,12 @@ def parse_arguments(arguments):
 		elif arguments['profile'] == True:
 			handle_profile_action(arguments)
 	except Exception, e:
-		print e 
-		
 		# If there is a HamperError instance being passed as an argument,
 		# grab the error message of that and print that to the console.
-		# if len(e.args) > 0 and hasattr(e.args[0], 'message'):
-		# 	print colored("ERROR: " + e.args[0].message, "red")
-		# else:
-		# 	print colored(e, "red")
+		if len(e.args) > 0 and hasattr(e.args[0], 'message'):
+			print colored("ERROR: " + e.args[0].message, "red")
+		else:
+			print colored(e, "red")
 		sys.exit(3)
 
 def pack():
