@@ -113,7 +113,8 @@ class HamperIdentifier(object):
 	
 	# Confirm the creation of the app ID
 	def click_submit_button(self):
-		time.sleep(2)
+		time.sleep(0.5)
 
 		submit_button = self.driver.find_element_by_css_selector(".button.small.blue.right.submit")
+		print submit_button
 		submit_button.click()
