@@ -82,7 +82,7 @@ class HamperIdentifier(object):
 		continue_button.click()
 
 		# Wait until all page content has been added
-		time.sleep(0.5)
+		time.sleep(2)
 
 		# If we've moved onto the next page in the process, there's not been an error
 		if "formID=1469461" not in self.driver.current_url:
