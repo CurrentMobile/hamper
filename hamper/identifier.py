@@ -91,6 +91,9 @@ class HamperIdentifier(object):
 		# If there aren't any errors, we can assume the page moved on successfully.
 		if len(error_elements) > 0:
 
+			print "FORM ERRORS FOUND"
+			print error_elements
+
 			# Create a list to store the actual errors 
 			# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
 			errors_list = []
@@ -107,6 +110,8 @@ class HamperIdentifier(object):
 
 			# Were there any actual errors?
 			if len(errors_list) > 0:
+				print "PARSED LIST HAS ERRORS"
+				print errors_list
 				# Raise an exception with the error codes
 				raise Exception(HamperError(1, str(errors_list)))
 		
