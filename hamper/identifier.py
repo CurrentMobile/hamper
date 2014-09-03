@@ -82,17 +82,17 @@ class HamperIdentifier(object):
 		continue_button.click()
 
 		# Wait until all page content has been added
-		time.sleep(0.2)
+		time.sleep(0.5)
 
 		# If we've moved onto the next page in the process, there's not been an error
 		if "formID=1469461" not in self.driver.current_url:
 			print "Didn't move on to next form"
 			# Load the error form elements from the page
 			error_elements = self.driver.find_elements_by_class_name("form-error")
-			
+
 			# Are there any error elements?
 			if len(error_elements) > 0:
-				
+
 				# Create a list to store the actual errors 
 				# (some errors might be in the page but not visible to the user, so they haven't been shown yet)
 				errors_list = []
