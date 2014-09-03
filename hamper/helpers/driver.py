@@ -6,7 +6,7 @@
 # which makes it a pain to have multiple browser windows handle the process)
 #
 
-from selenium.webdriver.phantomjs.webdriver import WebDriver as PhantomJS
+from selenium.webdriver.chrome.webdriver import WebDriver as PhantomJS
 
 import singleton
 
