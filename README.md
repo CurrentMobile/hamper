@@ -14,6 +14,7 @@ You will need to install PhantomJS yourself. We recommend Homebrew:
 ```
 brew install phantomjs
 ```
+***Make sure you're using phantomjs version 1.9.8+***
 
 Installation
 ===
